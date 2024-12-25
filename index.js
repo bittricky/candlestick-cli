@@ -7,55 +7,76 @@
  * @author Mitul Patel <https://mitulpa.tel>
  */
 
-import cli from './utils/cli.js';
-import { fetchCryptoData, renderChart, listCoins, getTopCoins } from './utils/chart.js';
+import { Command } from 'commander';
+import { renderChart } from './src/lib/chart.js';
+import { listCoins } from './src/lib/coins.js';
+import { fetchCandleData } from './src/api/api.js';
 
-const { flags } = cli;
+const program = new Command();
+
+program
+	.name('candlestick')
+	.description('CLI tool for viewing cryptocurrency candlestick charts')
+	.version('1.0.0')
+	.option('-l, --list', 'List available coins')
+	.option('-t, --toplist <number>', 'List top coins by market cap')
+	.option('-c, --coin <string>', 'Coin symbol (e.g. BTC, ETH)')
+	.option('-r, --currency <string>', 'Currency symbol (e.g. USD, EUR)', 'USD')
+	.option('-d, --days <number>', 'Number of days')
+	.option('-H, --hours <number>', 'Number of hours')
+	.option('-m, --mins <number>', 'Number of minutes')
+	.option('-w, --width <number>', 'Chart width')
+	.option('-h, --height <number>', 'Chart height')
+	.option('--disable-legend', 'Disable chart legend');
+
+program.parse();
+
+const options = program.opts();
 
 (async () => {
-    try {
-        if (flags.list) {
-            const coins = await listCoins();
-            console.log('Available coins:');
-            coins.forEach(coin => console.log(`${coin.symbol.toUpperCase()} - ${coin.name}`));
-            process.exit(0);
-        }
+	try {
+		if (options.list || options.toplist) {
+			const limit = parseInt(options.toplist) || 10;
+			const coins = await listCoins(limit);
+			console.log('Available coins:');
+			coins.forEach(coin =>
+				console.log(`${coin.symbol.toUpperCase()} - ${coin.name}`)
+			);
+			process.exit(0);
+		}
 
-        if (flags.toplist) {
-            const topCoins = await getTopCoins(flags.toplist);
-            console.log(`Top ${flags.toplist} coins by market cap:`);
-            topCoins.forEach(coin => {
-                console.log(`${coin.symbol.toUpperCase()} - ${coin.name} - $${coin.current_price}`);
-            });
-            process.exit(0);
-        }
+		if (!options.coin) {
+			console.error('Please specify a coin using -c or --coin');
+			process.exit(1);
+		}
 
-        const timeframe = {
-            days: flags.days,
-            hours: flags.hours,
-            mins: flags.mins
-        };
+		const timeframe = {
+			days: parseInt(options.days) || 0,
+			hours: parseInt(options.hours) || 0,
+			mins: parseInt(options.mins) || 0
+		};
 
-        // Default to 24 hours if no timeframe specified
-        if (!timeframe.days && !timeframe.hours && !timeframe.mins) {
-            timeframe.hours = 24;
-        }
+		// Default to 24 hours if no timeframe specified
+		if (!timeframe.days && !timeframe.hours && !timeframe.mins) {
+			timeframe.hours = 24;
+		}
 
-        const data = await fetchCryptoData(flags.coin, flags.currency, timeframe);
-        
-        const chartOptions = {
-            width: flags.width,
-            height: flags.height,
-            max: flags.max,
-            min: flags.min,
-            disableLegend: flags.disableLegend
-        };
+		const data = await fetchCandleData(
+			options.coin,
+			options.currency,
+			timeframe
+		);
 
-        const chart = await renderChart(data, chartOptions);
-        console.log(chart);
+		const chartOptions = {
+			width: parseInt(options.width) || undefined,
+			height: parseInt(options.height) || undefined,
+			disableLegend: options.disableLegend,
+			pair: `${options.coin}-${options.currency}`
+		};
 
-    } catch (error) {
-        console.error('Error:', error.message);
-        process.exit(1);
-    }
+		console.log(await renderChart(data, chartOptions));
+	} catch (error) {
+		console.error('Error:', error.message);
+		process.exit(1);
+	}
 })();
