@@ -72,6 +72,10 @@ export async function fetchCurrentPrice(fromCoin, toCoin = 'USD') {
             }
         });
 
+        if (response.data.Response === 'Error') {
+            throw new Error(response.data.Message);
+        }
+
         return response.data[toCoin.toUpperCase()];
     } catch (error) {
         console.error('Error fetching current price:', error.message);

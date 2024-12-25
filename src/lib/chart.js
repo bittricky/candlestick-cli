@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import { calculateStats, renderStats } from './stats.js';
-import { fetchCoinList, fetchTopCoins } from '../api/api.js';
 
 const DEFAULT_WIDTH = 120;
 const DEFAULT_HEIGHT = 30;
@@ -44,7 +43,8 @@ export function renderChart(data, options = {}) {
 
 	// Add legend if not disabled
 	if (!options.disableLegend) {
-		chart += '\n\n' + renderStats(calculateStats(data, trendLine, options.pair));
+		chart +=
+			'\n\n' + renderStats(calculateStats(data, trendLine, options.pair));
 	} else {
 		chart += '\n'; // Add newline even if legend is disabled
 	}
@@ -80,10 +80,10 @@ function calculateTrendLine(data) {
  * @returns {string} Formatted price
  */
 function formatAxisPrice(price) {
-    if (price >= 1000) {
-        return `${(price / 1000).toFixed(1)}k`;
-    }
-    return price.toFixed(price < 1 ? 4 : 2);
+	if (price >= 1000) {
+		return `${(price / 1000).toFixed(1)}k`;
+	}
+	return price.toFixed(price < 1 ? 4 : 2);
 }
 
 /**
@@ -92,8 +92,8 @@ function formatAxisPrice(price) {
  * @returns {string} Formatted time
  */
 function formatAxisTime(timestamp) {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+	const date = new Date(timestamp * 1000);
+	return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 /**
@@ -105,137 +105,108 @@ function formatAxisTime(timestamp) {
  * @returns {string} Rendered candlesticks with axes
  */
 function renderCandles(data, width, height, trendLine) {
-    // Calculate price range
-    const prices = data.flatMap(candle => [candle.high, candle.low]);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    const priceRange = maxPrice - minPrice;
+	// Calculate price range
+	const prices = data.flatMap(candle => [candle.high, candle.low]);
+	const minPrice = Math.min(...prices);
+	const maxPrice = Math.max(...prices);
+	const priceRange = maxPrice - minPrice;
 
-    // Add padding for axes
-    const PRICE_AXIS_WIDTH = 10;
-    const TIME_AXIS_HEIGHT = 2;
-    const chartWidth = width - PRICE_AXIS_WIDTH;
-    const chartHeight = height - TIME_AXIS_HEIGHT;
+	// Add padding for axes
+	const PRICE_AXIS_WIDTH = 10;
+	const TIME_AXIS_HEIGHT = 2;
+	const chartWidth = width - PRICE_AXIS_WIDTH;
+	const chartHeight = height - TIME_AXIS_HEIGHT;
 
-    // Initialize chart grid with space for axes
-    const grid = Array(height).fill().map(() => Array(width).fill(' '));
+	// Initialize chart grid with space for axes
+	const grid = Array(height)
+		.fill()
+		.map(() => Array(width).fill(' '));
 
-    // Calculate scaling factors
-    const timeScale = chartWidth / data.length;
-    const priceScale = chartHeight / priceRange;
+	// Calculate scaling factors
+	const timeScale = chartWidth / data.length;
+	const priceScale = chartHeight / priceRange;
 
-    // Plot trend line
-    trendLine.forEach((price, i) => {
-        const x = Math.floor(i * timeScale) + PRICE_AXIS_WIDTH;
-        const y = Math.floor((maxPrice - price) * priceScale);
-        if (x >= PRICE_AXIS_WIDTH && x < width && y >= 0 && y < chartHeight) {
-            grid[y][x] = TREND_LINE;
-        }
-    });
+	// Plot trend line
+	trendLine.forEach((price, i) => {
+		const x = Math.floor(i * timeScale) + PRICE_AXIS_WIDTH;
+		const y = Math.floor((maxPrice - price) * priceScale);
+		if (x >= PRICE_AXIS_WIDTH && x < width && y >= 0 && y < chartHeight) {
+			grid[y][x] = TREND_LINE;
+		}
+	});
 
-    // Plot candlesticks
-    data.forEach((candle, i) => {
-        const x = Math.floor(i * timeScale) + PRICE_AXIS_WIDTH;
-        if (x >= width) return;
+	// Plot candlesticks
+	data.forEach((candle, i) => {
+		const x = Math.floor(i * timeScale) + PRICE_AXIS_WIDTH;
+		if (x >= width) return;
 
-        // Calculate y-coordinates
-        const openY = Math.floor((maxPrice - candle.open) * priceScale);
-        const closeY = Math.floor((maxPrice - candle.close) * priceScale);
-        const highY = Math.floor((maxPrice - candle.high) * priceScale);
-        const lowY = Math.floor((maxPrice - candle.low) * priceScale);
+		// Calculate y-coordinates
+		const openY = Math.floor((maxPrice - candle.open) * priceScale);
+		const closeY = Math.floor((maxPrice - candle.close) * priceScale);
+		const highY = Math.floor((maxPrice - candle.high) * priceScale);
+		const lowY = Math.floor((maxPrice - candle.low) * priceScale);
 
-        // Draw candlestick
-        const isBullish = candle.close >= candle.open;
-        const candleColor = isBullish ? BULLISH_COLOR : BEARISH_COLOR;
+		// Draw candlestick
+		const isBullish = candle.close >= candle.open;
+		const candleColor = isBullish ? BULLISH_COLOR : BEARISH_COLOR;
 
-        // Draw wick
-        for (let y = highY; y <= lowY; y++) {
-            if (y >= 0 && y < chartHeight) {
-                grid[y][x] = WICK_LINE;
-            }
-        }
+		// Draw wick
+		for (let y = highY; y <= lowY; y++) {
+			if (y >= 0 && y < chartHeight) {
+				grid[y][x] = WICK_LINE;
+			}
+		}
 
-        // Draw body
-        const bodyStart = Math.min(openY, closeY);
-        const bodyEnd = Math.max(openY, closeY);
-        for (let y = bodyStart; y <= bodyEnd; y++) {
-            if (y >= 0 && y < chartHeight) {
-                grid[y][x] = candleColor;
-            }
-        }
-    });
+		// Draw body
+		const bodyStart = Math.min(openY, closeY);
+		const bodyEnd = Math.max(openY, closeY);
+		for (let y = bodyStart; y <= bodyEnd; y++) {
+			if (y >= 0 && y < chartHeight) {
+				grid[y][x] = candleColor;
+			}
+		}
+	});
 
-    // Draw y-axis (price)
-    for (let y = 0; y < chartHeight; y++) {
-        grid[y][PRICE_AXIS_WIDTH - 1] = AXIS_Y;
-        
-        // Add price labels at regular intervals
-        if (y % Math.floor(chartHeight / 4) === 0) {
-            const price = maxPrice - (y / priceScale);
-            const label = formatAxisPrice(price);
-            const labelStart = PRICE_AXIS_WIDTH - label.length - 2;
-            for (let i = 0; i < label.length; i++) {
-                grid[y][labelStart + i] = label[i];
-            }
-        }
-    }
+	// Draw y-axis (price)
+	for (let y = 0; y < chartHeight; y++) {
+		grid[y][PRICE_AXIS_WIDTH - 1] = AXIS_Y;
 
-    // Draw x-axis (time)
-    const timeAxisY = chartHeight;
-    for (let x = PRICE_AXIS_WIDTH; x < width; x++) {
-        grid[timeAxisY][x] = AXIS_X;
-    }
-
-    // Add corner
-    grid[timeAxisY][PRICE_AXIS_WIDTH - 1] = AXIS_CORNER;
-
-    // Add time labels
-    const timeInterval = Math.floor(data.length / 4); // Show 4 time labels
-    for (let i = 0; i <= data.length; i += timeInterval) {
-        if (i >= data.length) continue;
-        const x = Math.floor(i * timeScale) + PRICE_AXIS_WIDTH;
-        if (x >= width) continue;
-
-        grid[timeAxisY][x] = AXIS_TICK;
-        const time = formatAxisTime(data[i].time);
-        const labelStart = x - Math.floor(time.length / 2);
-        for (let j = 0; j < time.length; j++) {
-            if (labelStart + j >= width) break;
-            grid[timeAxisY + 1][labelStart + j] = time[j];
-        }
-    }
-
-    // Convert grid to string
-    return grid.map(row => row.join('')).join('\n');
-}
-
-export async function listCoins() {
-	try {
-		console.log(chalk.gray('Fetching available coins... \n'));
-		const coins = await fetchCoinList();
-		return coins.map(coin => ({
-			id: coin.Symbol,
-			symbol: coin.Symbol,
-			name: coin.CoinName
-		}));
-	} catch (error) {
-		console.error(chalk.red('Error fetching coin list:', error.message));
-		process.exit(1);
+		// Add price labels at regular intervals
+		if (y % Math.floor(chartHeight / 4) === 0) {
+			const price = maxPrice - y / priceScale;
+			const label = formatAxisPrice(price);
+			const labelStart = PRICE_AXIS_WIDTH - label.length - 2;
+			for (let i = 0; i < label.length; i++) {
+				grid[y][labelStart + i] = label[i];
+			}
+		}
 	}
-}
 
-export async function getTopCoins(limit) {
-	try {
-		console.log(chalk.gray('Fetching top coins... \n'));
-		const coins = await fetchTopCoins(limit);
-		return coins.map(item => ({
-			symbol: item.CoinInfo.Name,
-			name: item.CoinInfo.FullName,
-			current_price: item.RAW?.USD?.PRICE || 0,
-			market_cap: item.RAW?.USD?.MKTCAP || 0
-		}));
-	} catch (error) {
-		console.error(chalk.red('Error fetching top coins:', error.message));
-		process.exit(1);
+	// Draw x-axis (time)
+	const timeAxisY = chartHeight;
+	for (let x = PRICE_AXIS_WIDTH; x < width; x++) {
+		grid[timeAxisY][x] = AXIS_X;
 	}
+
+	// Add corner
+	grid[timeAxisY][PRICE_AXIS_WIDTH - 1] = AXIS_CORNER;
+
+	// Add time labels
+	const timeInterval = Math.floor(data.length / 4); // Show 4 time labels
+	for (let i = 0; i <= data.length; i += timeInterval) {
+		if (i >= data.length) continue;
+		const x = Math.floor(i * timeScale) + PRICE_AXIS_WIDTH;
+		if (x >= width) continue;
+
+		grid[timeAxisY][x] = AXIS_TICK;
+		const time = formatAxisTime(data[i].time);
+		const labelStart = x - Math.floor(time.length / 2);
+		for (let j = 0; j < time.length; j++) {
+			if (labelStart + j >= width) break;
+			grid[timeAxisY + 1][labelStart + j] = time[j];
+		}
+	}
+
+	// Convert grid to string
+	return grid.map(row => row.join('')).join('\n');
 }

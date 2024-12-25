@@ -1,63 +1,42 @@
-import axios from 'axios';
 import chalk from 'chalk';
+import { fetchCoinList, fetchTopCoins } from '../api/api.js';
 
-const API_KEY = process.env.CRYPTOCOMPARE_API_KEY || '';
-const BASE_URL = 'https://min-api.cryptocompare.com/data';
-
-export async function fetchTopCoins(limit = 10) {
+/**
+ * Lists all available coins
+ * @returns {Promise<Array>} Array of formatted coin data
+ */
+export async function listCoins() {
     try {
-        const response = await axios.get(`${BASE_URL}/top/totalvolfull`, {
-            params: {
-                limit,
-                tsym: 'USD',
-                api_key: API_KEY
-            }
-        });
-
-        return response.data.Data.map(coin => ({
-            symbol: coin.CoinInfo.Name,
-            fullName: coin.CoinInfo.FullName,
-            price: coin.RAW?.USD?.PRICE || 0,
-            change24h: coin.RAW?.USD?.CHANGEPCT24HOUR || 0
+        console.log(chalk.gray('Fetching available coins... \n'));
+        const coins = await fetchCoinList();
+        return coins.map(coin => ({
+            id: coin.Symbol,
+            symbol: coin.Symbol,
+            name: coin.CoinName
         }));
     } catch (error) {
-        console.error('Error fetching top coins:', error.message);
-        return [];
+        console.error(chalk.red('Error fetching coin list:', error.message));
+        process.exit(1);
     }
 }
 
-export async function listCoins(limit = 10) {
-    const coins = await fetchTopCoins(limit);
-    
-    console.log(chalk.bold('\nTop Cryptocurrencies:'));
-    coins.forEach((coin, index) => {
-        const change = coin.change24h;
-        const changeColor = change >= 0 ? chalk.green : chalk.red;
-        const changeSymbol = change >= 0 ? '↑' : '↓';
-        
-        console.log(
-            chalk.gray(`${index + 1}.`),
-            chalk.white(coin.fullName.padEnd(20)),
-            chalk.yellow(`$${coin.price.toFixed(2)}`.padEnd(12)),
-            changeColor(`${changeSymbol} ${Math.abs(change).toFixed(2)}%`)
-        );
-    });
-    console.log();
-}
-
-export async function validateCoinPair(pair) {
+/**
+ * Gets top coins by market cap
+ * @param {number} limit - Number of coins to fetch
+ * @returns {Promise<Array>} Array of formatted top coin data
+ */
+export async function getTopCoins(limit = 10) {
     try {
-        const [fromCoin, toCoin] = pair.split('-');
-        const response = await axios.get(`${BASE_URL}/price`, {
-            params: {
-                fsym: fromCoin,
-                tsyms: toCoin,
-                api_key: API_KEY
-            }
-        });
-
-        return response.data[toCoin] !== undefined;
+        console.log(chalk.gray('Fetching top coins... \n'));
+        const coins = await fetchTopCoins(limit);
+        return coins.map(item => ({
+            symbol: item.CoinInfo.Name,
+            name: item.CoinInfo.FullName,
+            current_price: item.RAW?.USD?.PRICE || 0,
+            market_cap: item.RAW?.USD?.MKTCAP || 0
+        }));
     } catch (error) {
-        return false;
+        console.error(chalk.red('Error fetching top coins:', error.message));
+        process.exit(1);
     }
 }
