@@ -26,7 +26,11 @@
 	],
 	"scripts": {
 		"format": "prettier --write \"./**/*.{js,json}\"",
-		"start": "node index.js"
+		"start": "node index.js",
+		"prepublishOnly": "pnpm run format && pnpm test",
+        "publish:patch": "pnpm version patch && pnpm publish",
+        "publish:minor": "pnpm version minor && pnpm publish",
+        "publish:major": "pnpm version major && pnpm publish"
 	},
 	"dependencies": {
 		"asciichart": "^1.5.25",
