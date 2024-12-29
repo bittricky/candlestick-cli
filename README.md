@@ -4,6 +4,19 @@
 
 A command-line tool to view cryptocurrency trading charts directly in your terminal.
 
+### ⚠️ Disclaimer:
+-------------
+The Risks of Swing and Day Trading
+Swing trading and day trading are high-risk investment strategies that involve significant financial exposure and volatility. These trading methods require substantial market knowledge, rapid decision-making, and an understanding of technical analysis tools. Without the right skills, traders can incur severe financial losses, sometimes exceeding their initial investments.
+
+Limitations of This Tool
+The candlestick-cli project is designed as a lightweight tool for identifying candlestick patterns in trading data. While it provides valuable insights for educational and exploratory purposes, it is not a comprehensive trading platform and lacks advanced features such as real-time data integration, algorithmic trading, or risk management utilities that are critical for competitive trading strategies.
+
+For serious traders, leveraging professional-grade trading tools with robust analytics, risk controls, and real-time data feeds is essential. The candlestick-cli tool is best used for learning and as a supplementary utility. Always perform due diligence and consider consulting a financial advisor before engaging in high-risk trading activities. If your uncomfortable with trading your own hard earned money, consider consulting a fiduciary before engaging in high-risk trading activities, a [three-fund](https://www.bogleheads.org/wiki/Three-fund_portfolio) portfolio is maybe what you're looking for instead.
+
+⚠️ Warning
+Past performance of any trading strategy, tool, or pattern does not guarantee future results. Trading involves substantial risk, and users should only trade with capital they can afford to lose.
+
 ## Features
 
 - 📈 Real-time candlestick charts in ASCII art
