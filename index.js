@@ -37,11 +37,7 @@ const options = program.opts();
 	try {
 		if (options.list || options.toplist) {
 			const limit = parseInt(options.toplist) || 10;
-			const coins = await listCoins(limit);
-			console.log('Available coins:');
-			coins.forEach(coin =>
-				console.log(`${coin.symbol.toUpperCase()} - ${coin.name}`)
-			);
+			await listCoins(limit);
 			process.exit(0);
 		}
 

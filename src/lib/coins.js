@@ -8,67 +8,86 @@ import inquirer from 'inquirer';
  * @returns {Promise<Array>} Array of formatted coin data
  */
 export async function listCoins() {
-    try {
-        console.log(chalk.gray('Fetching available coins... \n'));
-        const coins = await fetchCoinList();
-        const formattedCoins = coins.map(coin => ({
-            id: coin.Symbol,
-            symbol: coin.Symbol,
-            name: coin.CoinName
-        }));
+	try {
+		console.log(chalk.gray('Fetching available coins... \n'));
+		const coins = await fetchCoinList();
+		
+		if (!coins || !Array.isArray(coins)) {
+			throw new Error('Invalid response from API: Expected an array of coins');
+		}
 
-        const itemsPerPage = 10;
-        let currentPage = 0;
-        const totalPages = Math.ceil(formattedCoins.length / itemsPerPage);
+		const formattedCoins = coins.map(coin => {
+			if (!coin || !coin.Symbol || !coin.CoinName) {
+				console.warn(chalk.yellow(`Warning: Invalid coin data found, skipping: ${JSON.stringify(coin)}`));
+				return null;
+			}
+			return {
+				id: coin.Symbol,
+				symbol: coin.Symbol,
+				name: coin.CoinName
+			};
+		}).filter(coin => coin !== null);
 
-        const displayCoins = async (page) => {
-            const table = new Table({
-                head: [chalk.cyan('Symbol'), chalk.cyan('Name')],
-                colWidths: [15, 40],
-                style: {
-                    head: [],
-                    border: ['gray']
-                }
-            });
+		if (formattedCoins.length === 0) {
+			console.log(chalk.yellow('No valid coins found in the response'));
+			return;
+		}
 
-            const start = page * itemsPerPage;
-            const end = Math.min(start + itemsPerPage, formattedCoins.length);
-            const pageCoins = formattedCoins.slice(start, end);
+		const itemsPerPage = 10;
+		let currentPage = 0;
+		const totalPages = Math.ceil(formattedCoins.length / itemsPerPage);
 
-            pageCoins.forEach(coin => {
-                table.push([coin.symbol, coin.name]);
-            });
+		const displayCoins = async page => {
+			const table = new Table({
+				head: [chalk.cyan('Symbol'), chalk.cyan('Name')],
+				colWidths: [15, 40],
+				style: {
+					head: [],
+					border: ['gray']
+				}
+			});
 
-            console.clear();
-            console.log(table.toString());
-            console.log(chalk.gray(`\nPage ${page + 1} of ${totalPages}`));
+			const start = page * itemsPerPage;
+			const end = Math.min(start + itemsPerPage, formattedCoins.length);
+			const pageCoins = formattedCoins.slice(start, end);
 
-            const { action } = await inquirer.prompt([
-                {
-                    type: 'list',
-                    name: 'action',
-                    message: 'Navigation:',
-                    choices: [
-                        ...(page > 0 ? ['Previous Page'] : []),
-                        ...(page < totalPages - 1 ? ['Next Page'] : []),
-                        'Exit'
-                    ]
-                }
-            ]);
+			pageCoins.forEach(coin => {
+				table.push([coin.symbol, coin.name]);
+			});
 
-            if (action === 'Previous Page') {
-                await displayCoins(page - 1);
-            } else if (action === 'Next Page') {
-                await displayCoins(page + 1);
-            }
-        };
+			console.clear();
+			console.log(table.toString());
+			console.log(chalk.gray(`\nPage ${page + 1} of ${totalPages}`));
 
-        await displayCoins(currentPage);
-        return formattedCoins;
-    } catch (error) {
-        console.error(chalk.red('Error fetching coin list:', error.message));
-        process.exit(1);
-    }
+			const { action } = await inquirer.prompt([
+				{
+					type: 'list',
+					name: 'action',
+					message: 'Navigation:',
+					choices: [
+						...(page > 0 ? ['Previous Page'] : []),
+						...(page < totalPages - 1 ? ['Next Page'] : []),
+						'Exit'
+					]
+				}
+			]);
+
+			if (action === 'Previous Page') {
+				await displayCoins(page - 1);
+			} else if (action === 'Next Page') {
+				await displayCoins(page + 1);
+			} else if (action === 'Exit') {
+				console.clear();
+				return;
+			}
+		};
+
+		await displayCoins(currentPage);
+		return;
+	} catch (error) {
+		console.error(chalk.red('Error fetching coin list:', error.message));
+		process.exit(1);
+	}
 }
 
 /**
@@ -77,17 +96,17 @@ export async function listCoins() {
  * @returns {Promise<Array>} Array of formatted top coin data
  */
 export async function getTopCoins(limit = 10) {
-    try {
-        console.log(chalk.gray('Fetching top coins... \n'));
-        const coins = await fetchTopCoins(limit);
-        return coins.map(item => ({
-            symbol: item.CoinInfo.Name,
-            name: item.CoinInfo.FullName,
-            current_price: item.RAW?.USD?.PRICE || 0,
-            market_cap: item.RAW?.USD?.MKTCAP || 0
-        }));
-    } catch (error) {
-        console.error(chalk.red('Error fetching top coins:', error.message));
-        process.exit(1);
-    }
+	try {
+		console.log(chalk.gray('Fetching top coins... \n'));
+		const coins = await fetchTopCoins(limit);
+		return coins.map(item => ({
+			symbol: item.CoinInfo.Name,
+			name: item.CoinInfo.FullName,
+			current_price: item.RAW?.USD?.PRICE || 0,
+			market_cap: item.RAW?.USD?.MKTCAP || 0
+		}));
+	} catch (error) {
+		console.error(chalk.red('Error fetching top coins:', error.message));
+		process.exit(1);
+	}
 }
