@@ -22,7 +22,9 @@
 	],
 	"files": [
 		"index.js",
-		"utils"
+		"src",
+		"README.md",
+		"LICENSE"
 	],
 	"scripts": {
 		"format": "prettier --write \"./**/*.{js,json}\"",
