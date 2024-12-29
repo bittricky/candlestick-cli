@@ -171,7 +171,7 @@ export async function getTopCoins(limit = 10) {
 				)
 			);
 		}
-		
+
 		return formattedCoins;
 	} catch (error) {
 		console.error(chalk.red('Error fetching top coins:', error.message));
@@ -199,5 +199,5 @@ function formatMarketCap(marketCap) {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { listCoins, getTopCoins };
+	module.exports = { listCoins, getTopCoins };
 }

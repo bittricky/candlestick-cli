@@ -49,7 +49,11 @@ const options = program.opts();
 		}
 
 		if (!options.coin) {
-			console.log(chalk.gray('No coin specified, using the top coin by market cap...\n'));
+			console.log(
+				chalk.gray(
+					'No coin specified, using the top coin by market cap...\n'
+				)
+			);
 			const coins = await getTopCoins(1);
 			if (coins && coins.length > 0) {
 				options.coin = coins[0].symbol;
