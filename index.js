@@ -9,7 +9,7 @@
 
 import { Command } from 'commander';
 import { renderChart } from './src/lib/chart.js';
-import { listCoins } from './src/lib/coins.js';
+import { listCoins, getTopCoins } from './src/lib/coins.js';
 import { fetchCandleData } from './src/api/api.js';
 
 const program = new Command();
@@ -35,9 +35,15 @@ const options = program.opts();
 
 (async () => {
 	try {
-		if (options.list || options.toplist) {
+		if (options.list) {
 			const limit = parseInt(options.toplist) || 10;
 			await listCoins(limit);
+			process.exit(0);
+		}
+
+		if (options.toplist) {
+			const limit = parseInt(options.toplist) || 10;
+			await getTopCoins(limit);
 			process.exit(0);
 		}
 
