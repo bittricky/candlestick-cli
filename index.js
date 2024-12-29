@@ -8,6 +8,7 @@
  */
 
 import { Command } from 'commander';
+import chalk from 'chalk';
 import { renderChart } from './src/lib/chart.js';
 import { listCoins, getTopCoins } from './src/lib/coins.js';
 import { fetchCandleData } from './src/api/api.js';
@@ -48,8 +49,14 @@ const options = program.opts();
 		}
 
 		if (!options.coin) {
-			console.error('Please specify a coin using -c or --coin');
-			process.exit(1);
+			console.log(chalk.gray('No coin specified, using the top coin by market cap...\n'));
+			const coins = await getTopCoins(1);
+			if (coins && coins.length > 0) {
+				options.coin = coins[0].symbol;
+			} else {
+				console.error(chalk.red('Error: Could not fetch top coin'));
+				process.exit(1);
+			}
 		}
 
 		const timeframe = {

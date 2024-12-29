@@ -135,41 +135,44 @@ export async function getTopCoins(limit = 10) {
 
 		if (formattedCoins.length === 0) {
 			console.log(chalk.yellow('No valid coins found in the response'));
-			return;
+			return [];
 		}
 
-		const table = new Table({
-			head: [
-				chalk.cyan('Rank'),
-				chalk.cyan('Symbol'),
-				chalk.cyan('Name'),
-				chalk.cyan('Price (USD)'),
-				chalk.cyan('Market Cap (USD)')
-			],
-			colWidths: [8, 12, 30, 15, 20],
-			style: {
-				head: [],
-				border: ['gray']
-			}
-		});
+		if (limit > 1) {
+			const table = new Table({
+				head: [
+					chalk.cyan('Rank'),
+					chalk.cyan('Symbol'),
+					chalk.cyan('Name'),
+					chalk.cyan('Price (USD)'),
+					chalk.cyan('Market Cap (USD)')
+				],
+				colWidths: [8, 12, 30, 15, 20],
+				style: {
+					head: [],
+					border: ['gray']
+				}
+			});
 
-		formattedCoins.forEach((coin, index) => {
-			table.push([
-				(index + 1).toString(),
-				coin.symbol.toUpperCase(),
-				coin.name,
-				formatPrice(coin.current_price),
-				formatMarketCap(coin.market_cap)
-			]);
-		});
+			formattedCoins.forEach((coin, index) => {
+				table.push([
+					(index + 1).toString(),
+					coin.symbol.toUpperCase(),
+					coin.name,
+					formatPrice(coin.current_price),
+					formatMarketCap(coin.market_cap)
+				]);
+			});
 
-		console.log(table.toString());
-		console.log(
-			chalk.gray(
-				`\nShowing top ${formattedCoins.length} coins by market cap`
-			)
-		);
-		return;
+			console.log(table.toString());
+			console.log(
+				chalk.gray(
+					`\nShowing top ${formattedCoins.length} coins by market cap`
+				)
+			);
+		}
+		
+		return formattedCoins;
 	} catch (error) {
 		console.error(chalk.red('Error fetching top coins:', error.message));
 		process.exit(1);
