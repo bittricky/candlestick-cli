@@ -18,7 +18,7 @@ For serious traders, leveraging professional-grade trading tools with robust ana
 
 #### ⚠️ Warning:
 --------------
-Past performance of any trading strategy, tool, or pattern does not guarantee future results. Trading involves substantial risk, and users should only trade with capital they can afford to lose. Living with the consequences of your mistakes.
+Past performance of any trading strategy, tool, or pattern does not guarantee future results. Trading involves substantial risk, and users should only trade with capital they can afford to lose.
 
 ## Features
 
