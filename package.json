@@ -28,9 +28,9 @@
 		"format": "prettier --write \"./**/*.{js,json}\"",
 		"start": "node index.js",
 		"prepublishOnly": "pnpm run format && pnpm test",
-        "publish:patch": "pnpm version patch && pnpm publish",
-        "publish:minor": "pnpm version minor && pnpm publish",
-        "publish:major": "pnpm version major && pnpm publish"
+		"publish:patch": "pnpm version patch && pnpm publish",
+		"publish:minor": "pnpm version minor && pnpm publish",
+		"publish:major": "pnpm version major && pnpm publish"
 	},
 	"dependencies": {
 		"asciichart": "^1.5.25",
@@ -39,6 +39,7 @@
 		"cli-meow-help": "^4.0.0",
 		"cli-table3": "^0.6.5",
 		"commander": "^12.1.0",
+		"inquirer": "^12.3.0",
 		"meow": "^12.1.1",
 		"moment": "^2.29.4"
 	},

@@ -1,6 +1,6 @@
 # Candlestick Trading Chart CLI
 
-A command-line tool to view real-time trading charts directly in your terminal. Features include candlestick patterns, trend lines, and detailed statistics.
+A command-line tool to view real-time trading charts directly in your terminal.
 
 ## Features
 
