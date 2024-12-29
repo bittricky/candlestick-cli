@@ -1,5 +1,5 @@
 {
-	"name": "candlestick",
+	"name": "candlestick-cli",
 	"description": "Command line tool to view trading charts from your terminal",
 	"version": "1.0.0",
 	"license": "MIT",

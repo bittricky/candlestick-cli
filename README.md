@@ -1,4 +1,4 @@
-# Candlestick
+# Candlestick CLI
 
 > Are you analyzing market trends or just trying to set the mood? Either way, here is the candlestick you need!
 
@@ -16,10 +16,10 @@ A command-line tool to view cryptocurrency trading charts directly in your termi
 
 ```bash
 # Install globally using npm
-npm install -g candlestick
+npm install -g candlestick-cli
 
 # Or using pnpm
-pnpm add -g candlestick
+pnpm add -g candlestick-cli
 ```
 
 ## Usage
