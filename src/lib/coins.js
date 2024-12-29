@@ -197,3 +197,7 @@ function formatMarketCap(marketCap) {
 	});
 	return formatter.format(marketCap);
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { listCoins, getTopCoins };
+}

@@ -30,7 +30,8 @@
 		"prepublishOnly": "pnpm run format && pnpm test",
 		"publish:patch": "pnpm version patch && pnpm publish",
 		"publish:minor": "pnpm version minor && pnpm publish",
-		"publish:major": "pnpm version major && pnpm publish"
+		"publish:major": "pnpm version major && pnpm publish",
+		"test": "vitest"
 	},
 	"dependencies": {
 		"asciichart": "^1.5.25",
@@ -44,6 +45,7 @@
 		"moment": "^2.29.4"
 	},
 	"devDependencies": {
-		"prettier": "^3.1.0"
+		"prettier": "^3.1.0",
+		"vitest": "^1.1.0"
 	}
 }
