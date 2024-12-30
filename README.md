@@ -8,7 +8,7 @@ A command-line tool to view cryptocurrency trading charts directly in your termi
 
 #### The Risks of Swing and Day Trading
 -------------
-Swing trading and day trading are high-risk investment strategies that involve significant financial exposure and volatility. These trading methods require substantial market knowledge, rapid decision-making, and an understanding of technical analysis tools. Without the right skills, traders can incur severe financial losses, sometimes exceeding their initial investments.
+Swing trading, day trading, options are high-risk investment strategies that involve significant financial exposure and volatility. These trading methods require substantial market knowledge, rapid decision-making, and an understanding of technical analysis tools. Without the right skills, traders can incur severe financial losses, sometimes exceeding their initial investments.
 
 #### Limitations of This Tool
 -------------
